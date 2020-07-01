@@ -50,5 +50,14 @@ namespace WpfPlayer
 			var p = (Paragraph)e.Source;
 			p.Background = Brushes.White;
 		}
+
+		private void Paragraph_MouseDown(object sender, MouseEventArgs e)
+		{
+			var p = (Paragraph)e.Source;
+			if (e.LeftButton == MouseButtonState.Pressed)
+				p.Inlines.FirstInline.Background = Brushes.Red;
+			else
+				p.Inlines.FirstInline.Background = Brushes.White;
+		}
 	}
 }
