@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WpfPlayer
 {
@@ -22,6 +14,7 @@ namespace WpfPlayer
 	public partial class MainWindow : Window
 	{
 		string tempString;
+		Regex regex = new Regex(@"[^.!?]*[.!?]");
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -32,11 +25,52 @@ namespace WpfPlayer
 			var m = tempString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var i in m)
 			{
-				var p = new Paragraph(new Run("\t" + i));
-				p.MouseEnter += Paragraph_MouseEnter;
-				p.MouseLeave += Paragraph_MouseLeave;
-				rtbx.Document.Blocks.Add(p);
+				var c = regex.Matches(i);
+				if (c.Count > 0)
+				{
+					var p = new Paragraph(new Run("\t"));
+					foreach (Match g in c)
+					{
+						var run = new Run(g.Value);
+						run.MouseEnter += Run_MouseEnter;
+						run.MouseLeave += Run_MouseLeave;
+						run.MouseLeftButtonDown += Run_MouseLeftButtonDown;
+						p.Inlines.Add(run);
+					}
+					rtbx.Document.Blocks.Add(p);
+				}
+					//var g = i.Split(new[] { ".","!","?","," }, StringSplitOptions.RemoveEmptyEntries);
+					
+				//var p = new Paragraph(new Run("\t" + i));
+				//foreach (var i in g)
+				//{
+				//	var run = new Run(s);
+				//	run.MouseEnter += Run_MouseEnter;
+				//	run.MouseLeave += Run_MouseLeave;
+				//	p.Inlines.Add(run);
+				//}
+				//p.MouseEnter += Paragraph_MouseEnter;
+				//p.MouseLeave += Paragraph_MouseLeave;
+				//rtbx.Document.Blocks.Add(p);
 			}
+		}
+
+		private void Run_MouseEnter(object sender, MouseEventArgs e)
+		{
+			var r = (Run)e.Source;
+			r.Background = Brushes.Aquamarine;
+		}
+
+		private void Run_MouseLeave(object sender, MouseEventArgs e)
+		{
+			var r = (Run)e.Source;
+			r.Background = Brushes.White;
+		}
+
+		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
+		{
+			var r = (Run)e.Source;
+			MessageBox.Show(r.Text, "Selected sentense");
 		}
 
 		private void Paragraph_MouseEnter(object sender, MouseEventArgs e)
