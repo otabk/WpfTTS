@@ -57,37 +57,37 @@ namespace WpfPlayer
 
 		private void Run_MouseEnter(object sender, MouseEventArgs e)
 		{
-			var r = (Run)e.Source;
+			var r = (Run)sender;
 			r.Background = Brushes.Aquamarine;
 		}
 
 		private void Run_MouseLeave(object sender, MouseEventArgs e)
 		{
-			var r = (Run)e.Source;
+			var r = (Run)sender;
 			r.Background = Brushes.White;
 		}
 
 		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
 		{
-			var r = (Run)e.Source;
+			var r = (Run)sender;
 			MessageBox.Show(r.Text, "Selected sentense");
 		}
 
 		private void Paragraph_MouseEnter(object sender, MouseEventArgs e)
 		{
-			var p = (Paragraph)e.Source;
+			var p = (Paragraph)sender;
 			p.Background = Brushes.Aquamarine;
 		}
 
 		private void Paragraph_MouseLeave(object sender, MouseEventArgs e)
 		{
-			var p = (Paragraph)e.Source;
+			var p = (Paragraph)sender;
 			p.Background = Brushes.White;
 		}
 
 		private void Paragraph_MouseDown(object sender, MouseEventArgs e)
 		{
-			var p = (Paragraph)e.Source;
+			var p = (Paragraph)sender;
 			if (e.LeftButton == MouseButtonState.Pressed)
 				p.Inlines.FirstInline.Background = Brushes.Red;
 			else
