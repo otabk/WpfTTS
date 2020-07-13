@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,24 +11,26 @@ namespace WpfPlayer.Classes
 	{
 		private Int64 _number = 0;
 		private List<string> _result;
-		private string[] _word10, _word100, _wordk, _wordm, _wordb, _wordt, _word100, _word100;
+		private string[] _words, _word10, _w100n;
 		public NumberToText(Int64 number)
 		{
 			_number = number;
-			_word10 = new string[] { "ўн", "йигирма", "ўттиз", "қирқ", "эллик", "олтмиш", "етмиш", "саксон", "тўқсон", };
+			_words = new string[] { "бир", "икки", "уч", "тўрт", "беш", "олти", "етти", "саккиз", "тўққиз" };
+			_word10 = new string[] { "ўн", "йигирма", "ўттиз", "қирқ", "эллик", "олтмиш", "етмиш", "саксон", "тўқсон" };
+			_w100n = new string[] { "юз", "минг", "миллион", "миллиард", "триллион" };
 		}
 
 		void Divider(Int64 number)
 		{
 			var n = number.ToString().ToCharArray();
 			var nlemght = n.Length;
-			for (int i = nlemght, j = 0; i > 0; i--, j++)
+			for (int i = 0, j = nlemght; i < nlemght; i++, j--)
 			{
 				switch (n[i])
 				{
 					case '1':
 						_result.Add("бир");
-							break;
+						break;
 					case '2':
 						_result.Add("икки");
 						break;
@@ -54,6 +57,130 @@ namespace WpfPlayer.Classes
 						break;
 				}
 			}
+		}
+
+		private string Num2Text(char n, int index)
+		{
+			var sb = new List<string>();
+			var i = (int)n;
+
+			switch (index)
+			{
+				case 1:
+					sb.Add(DigitToText(n));
+					break;
+				case 2:
+					sb.Add(Digit10ToText(n));
+					sb.Add(DigitToText(n));
+					break;
+				case 3:
+					sb.Add(DigitToText(n));
+					sb.Add(_w100n[0]);
+					break;
+				case 4:
+					sb.Add(DigitToText(n));
+					sb.Add(_w100n[1]);
+					break;
+				case 5:
+					sb.Add(Digit10ToText(n));
+					sb.Add(DigitToText(n));
+					sb.Add(_w100n[1]);
+					break;
+				case 6:
+					sb.Add(DigitToText(n));
+					sb.Add(_w100n[0]);
+					sb.Add(Digit10ToText(n));
+					sb.Add(_w100n[1]);
+					break;
+				case 7:
+					sb.Add(_word10[6]);
+					break;
+				case 8:
+					sb.Add(_word10[7]);
+					break;
+				case 9:
+					sb.Add(_word10[8]);
+					break;
+				default:
+					break;
+			}
+			return "";
+		}
+
+		private string DigitToText(char c)
+		{
+			string r = "";
+			switch (c)
+			{
+				case '1':
+					r = _words[0];
+					break;
+				case '2':
+					r = _words[1];
+					break;
+				case '3':
+					r = _words[2];
+					break;
+				case '4':
+					r = _words[3];
+					break;
+				case '5':
+					r = _words[4];
+					break;
+				case '6':
+					r = _words[5];
+					break;
+				case '7':
+					r = _words[6];
+					break;
+				case '8':
+					r = _words[7];
+					break;
+				case '9':
+					r = _words[8];
+					break;
+				default:
+					break;
+			}
+			return r;
+		}
+
+		private string Digit10ToText(char c)
+		{
+			string r = "";
+			switch (c)
+			{
+				case '1':
+					r = _word10[0];
+					break;
+				case '2':
+					r = _word10[1];
+					break;
+				case '3':
+					r = _word10[2];
+					break;
+				case '4':
+					r = _word10[3];
+					break;
+				case '5':
+					r = _word10[4];
+					break;
+				case '6':
+					r = _word10[5];
+					break;
+				case '7':
+					r = _word10[6];
+					break;
+				case '8':
+					r = _word10[7];
+					break;
+				case '9':
+					r = _word10[8];
+					break;
+				default:
+					break;
+			}
+			return r;
 		}
 
 		//private void DTS(int value1, int value2, int value3)
