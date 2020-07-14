@@ -63,8 +63,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\Analyzer.cs" />
     <Compile Include="Classes\NumberToText.cs" />
+    <Compile Include="Classes\SensenceDivider.cs" />
     <Compile Include="Classes\WordDivider.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
