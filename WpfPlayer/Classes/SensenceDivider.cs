@@ -7,6 +7,7 @@ namespace WpfPlayer.Classes
 	{
 		Regex regex = new Regex(@"[^.!?]*[.!?]");
 		private string _text;
+
 		public SensenceDivider(string text)
 		{
 			_text = text;
@@ -20,10 +21,13 @@ namespace WpfPlayer.Classes
 				list = new List<string>();
 				var matchs = regex.Matches(_text);
 				if (matchs.Count > 0)
+				{
 					foreach (Match item in matchs)
 					{
-						list.Add(item.Value.Trim());
+						var s = item.Value.Trim();
+						list.Add(s);
 					}
+				}
 			}
 			return list;
 		}

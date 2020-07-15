@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\FixNumbers.cs" />
     <Compile Include="Classes\NumberToText.cs" />
     <Compile Include="Classes\SensenceDivider.cs" />
     <Compile Include="Classes\WordDivider.cs" />
