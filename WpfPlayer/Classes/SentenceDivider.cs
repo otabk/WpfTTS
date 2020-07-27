@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace WpfPlayer.Classes
 {
-	class SensenceDivider
+	class SentenceDivider
 	{
 		Regex regex = new Regex(@"[^.!?]*[.!?]");
 		private string _text;
 
-		public SensenceDivider(string text)
+		public SentenceDivider(string text)
 		{
 			_text = text;
 		}
