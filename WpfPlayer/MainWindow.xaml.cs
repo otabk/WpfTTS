@@ -50,8 +50,15 @@ namespace WpfPlayer
 			List<string> slogs = new List<string>();
 			foreach (string i in words)
 			{
-				
-				slogs.Add((wordsDBs.First(w => w.Word == i)).Slog);
+				WordsDB word = wordsDBs.Where(w => w.Word == i).FirstOrDefault();
+				if (word != null)
+				{
+					slogs.Add(word.Slog);
+				}
+				else
+				{
+
+				}
 			}
 			MessageBox.Show(string.Join(" ", slogs), "Selected sentense");
 		}
