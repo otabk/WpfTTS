@@ -15,7 +15,7 @@ namespace WpfPlayer.Classes
 
 		public WordDivider(string s)
 		{
-			Text = s;
+			Text = s.Replace("-", " ");
 		}
 
 		public WordDivider()

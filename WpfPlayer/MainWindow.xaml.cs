@@ -24,6 +24,7 @@ namespace WpfPlayer
 		SentenceDivider _sd;
 		WordDivider wordDivider = new WordDivider();
 		List<WordsDB> wordsDBs;
+		Analyzer analyzer = new Analyzer();
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -48,19 +49,14 @@ namespace WpfPlayer
 			wordDivider.Text = t;
 			var words = wordDivider.GetWords();
 			List<string> slogs = new List<string>();
+			List<string> tempslogs = new List<string>();
+			var result = "";
 			foreach (string i in words)
 			{
-				WordsDB word = wordsDBs.Where(w => w.Word == i).FirstOrDefault();
-				if (word != null)
-				{
-					slogs.Add(word.Slog);
-				}
-				else
-				{
-
-				}
+				tempslogs.Add(string.Join("-", analyzer.Analyze(i)));
 			}
-			MessageBox.Show(string.Join(" ", slogs), "Selected sentense");
+			result = string.Join(" ", tempslogs);
+			MessageBox.Show(result, "Selected sentense");
 		}
 
 		private void Paragraph_MouseEnter(object sender, MouseEventArgs e)
@@ -145,11 +141,11 @@ namespace WpfPlayer
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			using (var fs = File.OpenText("WordSlog2019.json"))
-			{
-				tempString = fs.ReadToEnd();
-			}
-			wordsDBs = JsonConvert.DeserializeObject<List<WordsDB>>(tempString);
+			//using (var fs = File.OpenText("WordSlog2019.json"))
+			//{
+			//	tempString = fs.ReadToEnd();
+			//}
+			//wordsDBs = JsonConvert.DeserializeObject<List<WordsDB>>(tempString);
 		}
 	}
 }
