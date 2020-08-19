@@ -23,7 +23,6 @@ namespace WpfPlayer.Classes
 
 		}
 
-
 		public List<string> GetWords()
 		{
 			if (string.IsNullOrEmpty(Text))
@@ -31,6 +30,20 @@ namespace WpfPlayer.Classes
 				return null;
 			}
 			List<string> words = Text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			for (int i = 0; i < words.Count; i++)
+			{
+				words[i] = words[i].Trim(_trimChars);
+			}
+			return words;
+		}
+
+		public List<string> GetWords(string word)
+		{
+			if (string.IsNullOrEmpty(word))
+			{
+				return null;
+			}
+			List<string> words = word.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
 			for (int i = 0; i < words.Count; i++)
 			{
 				words[i] = words[i].Trim(_trimChars);
