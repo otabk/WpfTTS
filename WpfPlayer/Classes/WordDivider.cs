@@ -9,13 +9,13 @@ namespace WpfPlayer.Classes
 {
 	class WordDivider
 	{
-		private char[] _trimChars = { ' ', '.', '!', ':', ';', '-' };
+		Regex regex = new Regex(@"[A-Za-z]+");
 
 		public string Text { get; set; }
 
 		public WordDivider(string s)
 		{
-			Text = s.Replace("-", " ");
+			Text = s;
 		}
 
 		public WordDivider()
@@ -25,14 +25,16 @@ namespace WpfPlayer.Classes
 
 		public List<string> GetWords()
 		{
+			//TODO: raqamlarni va qisqartirilgan so'zlar bilan ishlash, masalan BMT
 			if (string.IsNullOrEmpty(Text))
 			{
 				return null;
 			}
-			List<string> words = Text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
-			for (int i = 0; i < words.Count; i++)
+			var words = new List<string>();
+			var matches = regex.Matches(Text);
+			foreach (Match m in matches)
 			{
-				words[i] = words[i].Trim(_trimChars);
+				words.Add(m.Value);
 			}
 			return words;
 		}
@@ -43,12 +45,14 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
-			List<string> words = word.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
-			for (int i = 0; i < words.Count; i++)
+			var words = new List<string>();
+			var matches = regex.Matches(word);
+			foreach (Match m in matches)
 			{
-				words[i] = words[i].Trim(_trimChars);
+				words.Add(m.Value);
 			}
 			return words;
 		}
+	}
 	}
 }
