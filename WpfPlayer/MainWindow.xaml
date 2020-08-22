@@ -20,7 +20,7 @@
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>
         </Menu>
-        <RichTextBox x:Name="rtbx" VerticalScrollBarVisibility="Auto" Margin="0,26,0,0" Padding="5">
+        <RichTextBox x:Name="rtbx" VerticalScrollBarVisibility="Auto" Margin="0,26,0,0" Padding="5" HorizontalContentAlignment="Stretch">
             <FlowDocument></FlowDocument>
         </RichTextBox>
     </Grid>

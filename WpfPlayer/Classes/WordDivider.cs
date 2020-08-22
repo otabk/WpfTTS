@@ -9,7 +9,7 @@ namespace WpfPlayer.Classes
 {
 	class WordDivider
 	{
-		Regex regex = new Regex(@"[A-Za-z]+");
+		Regex regex = new Regex(@"[A-я]+"); //лотинча А дан кирилча я гача 
 
 		public string Text { get; set; }
 
@@ -53,6 +53,5 @@ namespace WpfPlayer.Classes
 			}
 			return words;
 		}
-	}
 	}
 }
