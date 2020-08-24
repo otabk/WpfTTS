@@ -9,7 +9,7 @@ namespace WpfPlayer.Classes
 {
 	class WordDivider
 	{
-		Regex regex = new Regex(@"[A-я]+"); //лотинча А дан кирилча я гача 
+		Regex regex = new Regex(@"[^\s]+"); //лотинча А дан кирилча я гача 
 
 		public string Text { get; set; }
 
@@ -30,6 +30,7 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
+			Text = Text.Replace("-", " ");
 			var words = new List<string>();
 			var matches = regex.Matches(Text);
 			foreach (Match m in matches)
@@ -45,6 +46,7 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
+			word = word.Replace("-", " ");
 			var words = new List<string>();
 			var matches = regex.Matches(word);
 			foreach (Match m in matches)

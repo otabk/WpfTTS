@@ -50,12 +50,11 @@ namespace WpfPlayer
 			var words = wordDivider.GetWords();
 			List<string> slogs = new List<string>();
 			List<string> tempslogs = new List<string>();
-			var result = "";
 			foreach (string i in words)
 			{
 				tempslogs.Add(string.Join("-", analyzer.Analyze(i)));
 			}
-			result = string.Join(" ", tempslogs);
+			string result = string.Join(" ", tempslogs);
 			MessageBox.Show(result, "Selected sentense");
 		}
 
