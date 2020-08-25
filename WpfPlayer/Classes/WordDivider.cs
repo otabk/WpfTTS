@@ -10,6 +10,7 @@ namespace WpfPlayer.Classes
 	class WordDivider
 	{
 		Regex regex = new Regex(@"[^\s]+"); //лотинча А дан кирилча я гача 
+											//[a-яA-Я0-9ўқҳғЎҚҲҒ]+ ushbu regex barcha so'zlarni oladi lekin matn ichidagi belgilarni olmayapti masalan '»' belgisini
 
 		public string Text { get; set; }
 
