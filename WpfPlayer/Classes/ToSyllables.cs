@@ -160,6 +160,14 @@ namespace WpfPlayer.Classes
 								wordMap = wordMap.Remove(0, 1);
 								continue;
 							}
+							// 0+0 холатни аниклаш
+							if (wordMap[0] == '0' && wordMap[1] == '0') //г+г
+							{
+								slogs.Add(tempword.Substring(0, 1)); //0 ни олиш
+								tempword = tempword.Remove(0, 1);
+								wordMap = wordMap.Remove(0, 1);
+								continue;
+							}
 						}
 						else // агар суз узунлиги 3 харф ва ундан кичик булса
 						{
@@ -241,7 +249,8 @@ namespace WpfPlayer.Classes
 							// 10111+0 холатни аниклаш
 							if (wordMap[0] == '1' && wordMap[1] == '0' && wordMap[2] == '1' && wordMap[3] == '1' && wordMap[4] == '1' && wordMap[5] == '0') //сгссс+г
 							{
-								if (tempword[0] == 'б' && tempword[1] == 'а' && tempword[2] == 'н' && tempword[3] == 'д') //бандлик ни ажратиш
+								if ((tempword[0] == 'б' && tempword[1] == 'а' && tempword[2] == 'н' && tempword[3] == 'д') ||
+									(tempword[0] == 'к' && tempword[1] == 'а' && tempword[2] == 'с' && tempword[3] == 'б')) //бандлик/касблар ни ажратиш
 								{
 									slogs.Add(tempword.Substring(0, 4)); //1011 ни олиш (кон-тракт)
 									tempword = tempword.Remove(0, 4);

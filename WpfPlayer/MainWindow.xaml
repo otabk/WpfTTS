@@ -19,13 +19,17 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>
-            <Button x:Name="PrevBtn" Content="Prev." FontSize="16" Click=""></Button>
+            <Button x:Name="PrevBtn" Content="Prev." FontSize="16" ></Button>
             <Button x:Name="StopBtn" Content="Stop" FontSize="16" ></Button>
             <Button x:Name="PlayBtn" Content="Play" FontSize="16" ></Button>
             <Button x:Name="NextBtn" Content="Next" FontSize="16" ></Button>
         </Menu>
         <RichTextBox x:Name="rtbx" VerticalScrollBarVisibility="Auto" Margin="0,27,0,0" Padding="5" HorizontalContentAlignment="Stretch">
-            <FlowDocument></FlowDocument>
+            <FlowDocument>
+                <!--<Paragraph>
+                    <Run Background="LightSkyBlue">123 dsf adsfgguw47rto7w gsufyasueyfg o8we7syuiedfg aoegt WIEGF </Run>
+                </Paragraph>-->
+            </FlowDocument>
         </RichTextBox>
     </Grid>
 </Window>

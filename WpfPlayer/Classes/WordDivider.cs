@@ -9,7 +9,7 @@ namespace WpfPlayer.Classes
 {
 	class WordDivider
 	{
-		Regex regex = new Regex(@"[^\s]+"); //лотинча А дан кирилча я гача 
+		Regex regex = new Regex(@"[a-яA-Я0-9ёўқҳғЁЎҚҲҒ]+"); //лотинча А дан кирилча я гача 
 											//[a-яA-Я0-9ўқҳғЎҚҲҒ]+ ushbu regex barcha so'zlarni oladi lekin matn ichidagi belgilarni olmayapti masalan '»' belgisini   
 
 		public string Text { get; set; }
@@ -31,7 +31,7 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
-			Text = Text.Replace("-", " ");
+			Text = Text.Replace("-", " ").Replace("»", "");
 			var words = new List<string>();
 			var matches = regex.Matches(Text);
 			foreach (Match m in matches)

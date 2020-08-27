@@ -23,7 +23,7 @@ namespace WpfPlayer
 		private Regex regex = new Regex(@"[^.!?]*[.!?]");
 		SentenceDivider _sd;
 		WordDivider wordDivider = new WordDivider();
-		List<WordsDB> wordsDBs;
+		List<Run> runs = new List<Run>();
 		Analyzer analyzer = new Analyzer();
 		public MainWindow()
 		{
@@ -33,13 +33,13 @@ namespace WpfPlayer
 		private void Run_MouseEnter(object sender, MouseEventArgs e)
 		{
 			var r = (Run)sender;
-			r.Background = Brushes.Aquamarine;
+			r.Background = Brushes.LightSkyBlue;
 		}
 
 		private void Run_MouseLeave(object sender, MouseEventArgs e)
 		{
 			var r = (Run)sender;
-			r.Background = Brushes.White;
+			r.Background = null;
 		}
 
 		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
@@ -48,7 +48,6 @@ namespace WpfPlayer
 			var t = r.Text.Replace(".", "");
 			wordDivider.Text = t;
 			var words = wordDivider.GetWords();
-			List<string> slogs = new List<string>();
 			List<string> tempslogs = new List<string>();
 			foreach (string i in words)
 			{
@@ -58,27 +57,6 @@ namespace WpfPlayer
 			MessageBox.Show(result, "Selected sentense");
 		}
 
-		private void Paragraph_MouseEnter(object sender, MouseEventArgs e)
-		{
-			var p = (Paragraph)sender;
-			p.Background = Brushes.Aquamarine;
-		}
-
-		private void Paragraph_MouseLeave(object sender, MouseEventArgs e)
-		{
-			var p = (Paragraph)sender;
-			p.Background = Brushes.White;
-		}
-
-		private void Paragraph_MouseDown(object sender, MouseEventArgs e)
-		{
-			var p = (Paragraph)sender;
-			if (e.LeftButton == MouseButtonState.Pressed)
-				p.Inlines.FirstInline.Background = Brushes.Red;
-			else
-				p.Inlines.FirstInline.Background = Brushes.White;
-		}
-
 		private void OpenFileMenu_Click(object sender, RoutedEventArgs e)
 		{
 			string text, file_path;
@@ -86,7 +64,7 @@ namespace WpfPlayer
 			if (openFileDialog.ShowDialog() == true)
 			{
 				file_path = openFileDialog.FileName;
-				text = File.ReadAllText(file_path, Encoding.GetEncoding("utf-8")).ToLower();
+				text = File.ReadAllText(file_path, Encoding.GetEncoding("utf-8"));
 				Title = file_path;
 				PrepareText(text);
 			}
@@ -110,15 +88,20 @@ namespace WpfPlayer
 				var c = regex.Matches(i);
 				if (c.Count > 0)
 				{
-					var p = new Paragraph(new Run("\t"));
+					var p = new Paragraph();	// { Padding = new Thickness(10, 0, 0, 0) };
 					foreach (Match g in c)
 					{
-						var run = new Run(g.Value);
+						var run = new Run(g.Value.Trim());
+						var emptyrun = new Run(" ");
 						run.MouseEnter += Run_MouseEnter;
 						run.MouseLeave += Run_MouseLeave;
 						run.MouseLeftButtonDown += Run_MouseLeftButtonDown;
 						p.Inlines.Add(run);
+						p.Inlines.Add(emptyrun);
+						runs.Add(run);
 					}
+					var lastinline = p.Inlines.LastInline;
+					lastinline = null;
 					rtbx.Document.Blocks.Add(p);
 				}
 				//var g = i.Split(new[] { ".","!","?","," }, StringSplitOptions.RemoveEmptyEntries);
@@ -135,7 +118,7 @@ namespace WpfPlayer
 				//p.MouseLeave += Paragraph_MouseLeave;
 				//rtbx.Document.Blocks.Add(p);
 			}
-			var sentences = _sd.GetSentences();
+			//var sentences = _sd.GetSentences();
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
