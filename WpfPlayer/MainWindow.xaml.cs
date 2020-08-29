@@ -1,12 +1,12 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Media;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -14,12 +14,11 @@ using WpfPlayer.Classes;
 
 namespace WpfPlayer
 {
-	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
-	/// </summary>
 	public partial class MainWindow : Window
 	{
-		string tempString;
+		public SoundPlayer soundPlayer = new SoundPlayer();
+		public int _index = 0, _wavindex = 0;
+		public List<string> wavList;;
 		private Regex regex = new Regex(@"[^.!?]*[.!?]");
 		SentenceDivider _sd;
 		WordDivider wordDivider = new WordDivider();
@@ -45,16 +44,20 @@ namespace WpfPlayer
 		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
 		{
 			var r = (Run)sender;
-			var t = r.Text.Replace(".", "");
-			wordDivider.Text = t;
+			_index = runs.IndexOf(r);
+			wordDivider.Text = r.Text;
 			var words = wordDivider.GetWords();
 			List<string> tempslogs = new List<string>();
+			List<string> slogs; ;
+			wavList = new List<string>();
 			foreach (string i in words)
 			{
-				tempslogs.Add(string.Join("-", analyzer.Analyze(i)));
+				slogs = (List<string>)analyzer.Analyze(i); //0 1 0 1 1 0
+				tempslogs.Add(string.Join("-", slogs));
+				slogs.Add("<ws>"); //probel belgisi
 			}
 			string result = string.Join(" ", tempslogs);
-			MessageBox.Show(result, "Selected sentense");
+			MessageBox.Show(result, $"Selected sentense [id = {_index}].");
 		}
 
 		private void OpenFileMenu_Click(object sender, RoutedEventArgs e)
@@ -100,8 +103,7 @@ namespace WpfPlayer
 						p.Inlines.Add(emptyrun);
 						runs.Add(run);
 					}
-					var lastinline = p.Inlines.LastInline;
-					lastinline = null;
+					p.Inlines.Remove(p.Inlines.LastInline);
 					rtbx.Document.Blocks.Add(p);
 				}
 				//var g = i.Split(new[] { ".","!","?","," }, StringSplitOptions.RemoveEmptyEntries);
@@ -128,6 +130,29 @@ namespace WpfPlayer
 			//	tempString = fs.ReadToEnd();
 			//}
 			//wordsDBs = JsonConvert.DeserializeObject<List<WordsDB>>(tempString);
+		}
+
+		private void PrevBtn_Click(object sender, RoutedEventArgs e)
+		{
+			Button btn = (Button)sender;
+			switch (btn.Name)
+			{
+				case "PrevBtn":
+					if (_wavindex > 0)
+					{
+						_wavindex -= 1;
+						soundPlayer.SoundLocation = "";
+					}
+					break;
+				case "StopBtn":
+					break;
+				case "PlayBtn":
+					break;
+				case "NextBtn":
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }

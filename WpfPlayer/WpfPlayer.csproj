@@ -97,6 +97,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\AudioSyllable.cs" />
     <Compile Include="Classes\FixNumbers.cs" />
     <Compile Include="Classes\NumberToText.cs" />
     <Compile Include="Classes\SentenceDivider.cs" />
