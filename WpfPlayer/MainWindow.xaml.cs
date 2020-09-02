@@ -1,10 +1,12 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -18,12 +20,14 @@ namespace WpfPlayer
 	{
 		public SoundPlayer soundPlayer = new SoundPlayer();
 		public int _index = 0, _wavindex = 0;
-		public List<string> wavList;;
+		public List<string> wavList;
 		private Regex regex = new Regex(@"[^.!?]*[.!?]");
 		SentenceDivider _sd;
 		WordDivider wordDivider = new WordDivider();
 		List<Run> runs = new List<Run>();
 		Analyzer analyzer = new Analyzer();
+		private Dictionary<string, List<string>> audioPaths;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -47,17 +51,35 @@ namespace WpfPlayer
 			_index = runs.IndexOf(r);
 			wordDivider.Text = r.Text;
 			var words = wordDivider.GetWords();
-			List<string> tempslogs = new List<string>();
-			List<string> slogs; ;
+			List<string> tempslogs = null;
+			List<string> slogs = new List<string>();
 			wavList = new List<string>();
 			foreach (string i in words)
 			{
-				slogs = (List<string>)analyzer.Analyze(i); //0 1 0 1 1 0
-				tempslogs.Add(string.Join("-", slogs));
+				tempslogs = (List<string>)analyzer.Analyze(i); //0 1 0 1 1 0
+				if (tempslogs != null)
+					foreach (string item in tempslogs)
+					{
+						slogs.Add(item);
+					}
 				slogs.Add("<ws>"); //probel belgisi
 			}
-			string result = string.Join(" ", tempslogs);
-			MessageBox.Show(result, $"Selected sentense [id = {_index}].");
+			slogs.RemoveAt(slogs.Count - 1);
+
+			SoundPlayer player = new SoundPlayer();
+			foreach (string item in slogs)
+			{
+				if (item == "<ws>")
+				{
+					Thread.Sleep(500);
+					continue;
+				}
+				var translatedSlog = Translator.Translit(item);
+				player.SoundLocation = audioPaths[translatedSlog][0];
+				player.PlaySync();
+			}
+			player.Dispose();
+			//MessageBox.Show(string.Join("-", slogs.ToArray()), $"Selected sentense [id = {_index}].");
 		}
 
 		private void OpenFileMenu_Click(object sender, RoutedEventArgs e)
@@ -130,9 +152,15 @@ namespace WpfPlayer
 			//	tempString = fs.ReadToEnd();
 			//}
 			//wordsDBs = JsonConvert.DeserializeObject<List<WordsDB>>(tempString);
+
+			using (var sr = File.OpenText("AudioPath.txt"))
+			{
+				string paths = sr.ReadToEnd();
+				audioPaths = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(paths);
+			}
 		}
 
-		private void PrevBtn_Click(object sender, RoutedEventArgs e)
+		private void Btn_Click(object sender, RoutedEventArgs e)
 		{
 			Button btn = (Button)sender;
 			switch (btn.Name)

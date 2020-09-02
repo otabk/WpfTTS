@@ -102,6 +102,7 @@
     <Compile Include="Classes\NumberToText.cs" />
     <Compile Include="Classes\SentenceDivider.cs" />
     <Compile Include="Classes\ToSyllables.cs" />
+    <Compile Include="Classes\Translator.cs" />
     <Compile Include="Classes\WordDivider.cs" />
     <Compile Include="Classes\WordsDB.cs" />
     <Compile Include="MainWindow.xaml.cs">
