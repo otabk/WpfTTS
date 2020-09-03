@@ -7,24 +7,15 @@ using System.Threading.Tasks;
 
 namespace WpfPlayer.Classes
 {
-	class WordDivider
+	static class WordDivider
 	{
-		Regex regex = new Regex(@"[a-яA-Я0-9ёўқҳғЁЎҚҲҒ]+"); //лотинча А дан кирилча я гача 
-											//[a-яA-Я0-9ўқҳғЎҚҲҒ]+ ushbu regex barcha so'zlarni oladi lekin matn ichidagi belgilarni olmayapti masalan '»' belgisini   
+		static Regex regex = new Regex(@"[a-яA-Я0-9ёўқҳғЁЎҚҲҒ]+");
 
-		public string Text { get; set; }
+		//[a-яA-Я0-9ўқҳғЎҚҲҒ]+ ushbu regex barcha so'zlarni oladi lekin matn ichidagi belgilarni olmayapti masalan '»' belgisini   
 
-		public WordDivider(string s)
-		{
-			Text = s;
-		}
+		public static string Text { get; set; }
 
-		public WordDivider()
-		{
-
-		}
-
-		public List<string> GetWords()
+		public static string[] GetWords()
 		{
 			//TODO: raqamlarni va qisqartirilgan so'zlar bilan ishlash, masalan BMT
 			if (string.IsNullOrEmpty(Text))
@@ -38,10 +29,10 @@ namespace WpfPlayer.Classes
 			{
 				words.Add(m.Value);
 			}
-			return words;
+			return words.ToArray();
 		}
 
-		public List<string> GetWords(string word)
+		public static string[] GetWords(string word)
 		{
 			if (string.IsNullOrEmpty(word))
 			{
@@ -54,7 +45,7 @@ namespace WpfPlayer.Classes
 			{
 				words.Add(m.Value);
 			}
-			return words;
+			return words.ToArray();
 		}
 	}
 }

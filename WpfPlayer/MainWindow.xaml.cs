@@ -18,15 +18,16 @@ namespace WpfPlayer
 {
 	public partial class MainWindow : Window
 	{
-		public SoundPlayer soundPlayer = new SoundPlayer();
-		public int _index = 0, _wavindex = 0;
-		public List<string> wavList;
-		private Regex regex = new Regex(@"[^.!?]*[.!?]");
+		SoundPlayer soundPlayer = new SoundPlayer();
+		int _index = 0, _wavindex = 0;
+		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
+		List<TWord> Suzlar = new List<TWord>();
+		List<string> wavList;
+		Regex regex = new Regex(@"[^.!?]*[.!?]");
 		SentenceDivider _sd;
-		WordDivider wordDivider = new WordDivider();
-		List<Run> runs = new List<Run>();
+		List<Run> runsList = new List<Run>();
 		Analyzer analyzer = new Analyzer();
-		private Dictionary<string, List<string>> audioPaths;
+		Dictionary<string, List<string>> audioPaths;
 
 		public MainWindow()
 		{
@@ -48,16 +49,16 @@ namespace WpfPlayer
 		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
 		{
 			var r = (Run)sender;
-			_index = runs.IndexOf(r);
-			wordDivider.Text = r.Text;
-			var words = wordDivider.GetWords();
-			List<string> tempslogs = null;
+			_index = runsList.IndexOf(r);
+			WordDivider.Text = r.Text;
+			var words = WordDivider.GetWords();
+			string[] tempslogs = null;
 			List<string> slogs = new List<string>();
 			wavList = new List<string>();
 			foreach (string i in words)
 			{
-				tempslogs = (List<string>)analyzer.Analyze(i); //0 1 0 1 1 0
-				if (tempslogs != null)
+				tempslogs = analyzer.Analyze(i); //0 1 0 1 1 0
+				if (tempslogs != null || tempslogs.Length != 0)
 					foreach (string item in tempslogs)
 					{
 						slogs.Add(item);
@@ -100,30 +101,62 @@ namespace WpfPlayer
 			
 		}
 
-		void PrepareText(string text)
+		void PrepareText(string text) //matn kiritiladi
 		{
 			//using(var fs = File.OpenText("temp.txt"))
 			//{
 			//	tempString = fs.ReadToEnd();
 			//}
-			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-			_sd = new SentenceDivider(text);
-			foreach (var i in paragraphs)
+			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
+																											   //_sd = new SentenceDivider(text);
+			var gaplar = regex.Matches(text); //abzatsni gaplarga bo'ladi
+			Gaplar = new Dictionary<int, TWord[]>();
+			for (int i = 0; i < gaplar.Count; i++)
 			{
-				var c = regex.Matches(i);
-				if (c.Count > 0)
+				var suzlar = WordDivider.GetWords(gaplar[i].Value);
+				if (suzlar != null)
 				{
-					var p = new Paragraph();	// { Padding = new Thickness(10, 0, 0, 0) };
-					foreach (Match g in c)
+					TWord[] words = new TWord[suzlar.Length];
+					for (int j = 0; j < suzlar.Length; j++)
 					{
-						var run = new Run(g.Value.Trim());
+						var sloglar = analyzer.Analyze(suzlar[j]);
+						SWord[] sWords = new SWord[sloglar.Length];
+						if (sloglar != null)
+						{
+							for (int l = 0; l < sloglar.Length; l++)
+							{
+								var translatedSlog = Translator.Translit(sloglar[l]);
+								sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+								//sWords[l].Syllable = sloglar[l];
+								//sWords[l].TWavPath = audioPaths[translatedSlog][0];
+							}
+						}
+						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
+						//words[j].Word = suzlar[j];
+						//words[j].Syllables = sWords;
+					}
+					Gaplar.Add(i, words);
+				}
+			}
+			for (int i = 0, j = 0; i < paragraphs.Length; i++)
+			{
+				string s = paragraphs[i];
+				if (gaplar.Count > 0)
+				{
+					var p = new Paragraph();
+					foreach (Match gap in gaplar)
+					{
+						var str = gap.Value.Trim();
+						var run = new Run(str);
 						var emptyrun = new Run(" ");
 						run.MouseEnter += Run_MouseEnter;
 						run.MouseLeave += Run_MouseLeave;
 						run.MouseLeftButtonDown += Run_MouseLeftButtonDown;
 						p.Inlines.Add(run);
 						p.Inlines.Add(emptyrun);
-						runs.Add(run);
+						
+						runsList.Add(run);
+						j++;
 					}
 					p.Inlines.Remove(p.Inlines.LastInline);
 					rtbx.Document.Blocks.Add(p);
@@ -142,7 +175,6 @@ namespace WpfPlayer
 				//p.MouseLeave += Paragraph_MouseLeave;
 				//rtbx.Document.Blocks.Add(p);
 			}
-			//var sentences = _sd.GetSentences();
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)

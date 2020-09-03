@@ -10,7 +10,7 @@ namespace WpfPlayer.Classes
 {
 	class Analyzer
 	{
-		public IEnumerable<string> Analyze(string word)
+		public string[] Analyze(string word)
 		{
 			word = word.ToLower();
 			string tempword = word;
@@ -65,7 +65,7 @@ namespace WpfPlayer.Classes
 			if (jamiunli == 1)
 			{
 				slogs.Add(word);
-				return slogs;
+				return slogs.ToArray();
 			}
 			// Суз икки ва ундан куп бугиндан иборат булса (боши) --------------------------------------------------------------------------------
 			else
@@ -76,7 +76,7 @@ namespace WpfPlayer.Classes
 					if (jamiunli - i == 1)
 					{
 						slogs.Add(tempword);
-						return slogs;
+						return slogs.ToArray();
 					}
 
 					// охири "ё" билан тугаган сузлар билан ишлаш
@@ -88,7 +88,7 @@ namespace WpfPlayer.Classes
 						}
 						slogs.Add(tempword);
 						slogs.Add("ё");
-						return slogs;
+						return slogs.ToArray();
 					}
 					/* maxsus so'zlaga tekshirish */
 					// "Аэро" сузини ажратиб олиш ---------------------------------------------------------------------------------------------
@@ -407,7 +407,7 @@ namespace WpfPlayer.Classes
 					}
 				}
 			}
-			return slogs;
+			return slogs.ToArray();
 		}
 	}
 }
