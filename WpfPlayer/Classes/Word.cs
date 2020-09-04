@@ -9,5 +9,6 @@
 	{
 		public SWord[] Syllables { get; set; }
 		public string Word { get; set; }
+		
 	}
 }

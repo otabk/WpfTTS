@@ -127,13 +127,9 @@ namespace WpfPlayer
 							{
 								var translatedSlog = Translator.Translit(sloglar[l]);
 								sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
-								//sWords[l].Syllable = sloglar[l];
-								//sWords[l].TWavPath = audioPaths[translatedSlog][0];
 							}
 						}
 						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
-						//words[j].Word = suzlar[j];
-						//words[j].Syllables = sWords;
 					}
 					Gaplar.Add(i, words);
 				}
