@@ -9,6 +9,6 @@
 	{
 		public SWord[] Syllables { get; set; }
 		public string Word { get; set; }
-		
+		public byte[] Wav { get; set; }
 	}
 }
