@@ -129,7 +129,19 @@ namespace WpfPlayer
 								sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
 							}
 						}
-						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
+						string wavpath = $"Words\\{suzlar[j]}.wav";
+						if (!File.Exists(wavpath)) //wav fayl borligini tekshirish
+						{
+							WaveIO waveIO = new WaveIO();
+							var paths = new string[sWords.Length];
+							for (int n = 0; n < sWords.Length; n++)
+							{
+								paths[n] = sWords[n].TWavPath;
+							}
+							waveIO.Merge(paths, wavpath); // audio fayllarni birlashtirish
+						}
+						//todo wav fayllarni adresini yozish kerak
+						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords, Wav = wavpath};
 					}
 					Gaplar.Add(i, words);
 				}

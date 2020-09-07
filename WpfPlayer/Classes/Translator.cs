@@ -16,7 +16,7 @@ namespace WpfPlayer.Classes
 
         public static string Translit(string str)
         {
-            string[] lat_low = { "a", "b", "v", "g", "d", "e", "yo", "j", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "x", "ts", "ch", "sh", "\'", "e", "yu", "ya", "h", "g\'", "q", "o\'" };
+            string[] lat_low = { "a", "b", "v", "g", "d", "e", "yo", "j", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "x", "ts", "ch", "sh", $"'", "e", "yu", "ya", "h", $"g'", "q", $"o'" };
             string[] rus_low = { "а", "б", "в", "г", "д", "е", "ё" , "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х",  "ц",  "ч",  "ш", "ъ",  "э",  "ю",  "я", "ҳ", "ғ", "қ", "ў" };
             for (int i = 0; i < 34; i++)
             {

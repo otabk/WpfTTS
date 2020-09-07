@@ -107,6 +107,7 @@
     <Compile Include="Classes\SentenceDivider.cs" />
     <Compile Include="Classes\ToSyllables.cs" />
     <Compile Include="Classes\Translator.cs" />
+    <Compile Include="Classes\WaveIO.cs" />
     <Compile Include="Classes\Word.cs" />
     <Compile Include="Classes\WordDivider.cs" />
     <Compile Include="Classes\WordsDB.cs" />

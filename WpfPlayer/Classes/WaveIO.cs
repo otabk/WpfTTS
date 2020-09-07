@@ -37,7 +37,6 @@ namespace WpfPlayer.Classes
         private void WaveHeaderOUT(string sPath)
         {
             FileStream fs = new FileStream(sPath, FileMode.Create, FileAccess.Write);
-
             BinaryWriter bw = new BinaryWriter(fs);
             fs.Position = 0;
             bw.Write(new char[4] { 'R', 'I', 'F', 'F' });
