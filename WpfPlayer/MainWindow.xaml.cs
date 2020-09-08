@@ -13,18 +13,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfPlayer.Classes;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace WpfPlayer
 {
 	public partial class MainWindow : Window
 	{
 		SoundPlayer soundPlayer = new SoundPlayer();
+		WaveFileReader waveFile = null;
+		DirectSoundOut soundOut = null;
+
+
 		int _index = 0, _wavindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
-		List<TWord> Suzlar = new List<TWord>();
-		List<string> wavList;
 		Regex regex = new Regex(@"[^.!?]*[.!?]");
-		SentenceDivider _sd;
 		List<Run> runsList = new List<Run>();
 		Analyzer analyzer = new Analyzer();
 		Dictionary<string, List<string>> audioPaths;
@@ -54,7 +57,6 @@ namespace WpfPlayer
 			var words = WordDivider.GetWords();
 			string[] tempslogs = null;
 			List<string> slogs = new List<string>();
-			wavList = new List<string>();
 			foreach (string i in words)
 			{
 				tempslogs = analyzer.Analyze(i); //0 1 0 1 1 0
@@ -111,6 +113,7 @@ namespace WpfPlayer
 																											   //_sd = new SentenceDivider(text);
 			var gaplar = regex.Matches(text); //abzatsni gaplarga bo'ladi
 			Gaplar = new Dictionary<int, TWord[]>();
+			var missingSlogs = new List<string>();
 			for (int i = 0; i < gaplar.Count; i++)
 			{
 				var suzlar = WordDivider.GetWords(gaplar[i].Value);
@@ -126,10 +129,17 @@ namespace WpfPlayer
 							for (int l = 0; l < sloglar.Length; l++)
 							{
 								var translatedSlog = Translator.Translit(sloglar[l]);
-								sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+								try
+								{
+									sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+								}
+								catch
+								{
+									missingSlogs.Add(sloglar[l]);
+								}
 							}
 						}
-						string wavpath = $"Words\\{suzlar[j]}.wav";
+						/*string wavpath = $"Words\\{suzlar[j]}.wav"; // boshqa yo'lini topdim
 						if (!File.Exists(wavpath)) //wav fayl borligini tekshirish
 						{
 							WaveIO waveIO = new WaveIO();
@@ -139,9 +149,9 @@ namespace WpfPlayer
 								paths[n] = sWords[n].TWavPath;
 							}
 							waveIO.Merge(paths, wavpath); // audio fayllarni birlashtirish
-						}
+						}*/
 						//todo wav fayllarni adresini yozish kerak
-						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords, Wav = wavpath};
+						//words[j] = new TWord() { Word = suzlar[j], Syllables = sWords, Wav = wavpath}; //wavpath o'rniga ConcatenatingSampleProvider
 					}
 					Gaplar.Add(i, words);
 				}
