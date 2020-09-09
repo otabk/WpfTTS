@@ -20,10 +20,7 @@ namespace WpfPlayer
 {
 	public partial class MainWindow : Window
 	{
-		SoundPlayer soundPlayer = new SoundPlayer();
-		WaveFileReader waveFile = null;
-		DirectSoundOut soundOut = null;
-
+		WaveOutEvent soundPlayer = new WaveOutEvent();
 
 		int _index = 0, _wavindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
@@ -151,7 +148,8 @@ namespace WpfPlayer
 							waveIO.Merge(paths, wavpath); // audio fayllarni birlashtirish
 						}*/
 						//todo wav fayllarni adresini yozish kerak
-						//words[j] = new TWord() { Word = suzlar[j], Syllables = sWords, Wav = wavpath}; //wavpath o'rniga ConcatenatingSampleProvider
+						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
+						words[j].Init();
 					}
 					Gaplar.Add(i, words);
 				}
@@ -179,30 +177,11 @@ namespace WpfPlayer
 					p.Inlines.Remove(p.Inlines.LastInline);
 					rtbx.Document.Blocks.Add(p);
 				}
-				//var g = i.Split(new[] { ".","!","?","," }, StringSplitOptions.RemoveEmptyEntries);
-
-				//var p = new Paragraph(new Run("\t" + i));
-				//foreach (var i in g)
-				//{
-				//	var run = new Run(s);
-				//	run.MouseEnter += Run_MouseEnter;
-				//	run.MouseLeave += Run_MouseLeave;
-				//	p.Inlines.Add(run);
-				//}
-				//p.MouseEnter += Paragraph_MouseEnter;
-				//p.MouseLeave += Paragraph_MouseLeave;
-				//rtbx.Document.Blocks.Add(p);
 			}
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			//using (var fs = File.OpenText("WordSlog2019.json"))
-			//{
-			//	tempString = fs.ReadToEnd();
-			//}
-			//wordsDBs = JsonConvert.DeserializeObject<List<WordsDB>>(tempString);
-
 			using (var sr = File.OpenText("AudioPath.txt"))
 			{
 				string paths = sr.ReadToEnd();
@@ -216,10 +195,10 @@ namespace WpfPlayer
 			switch (btn.Name)
 			{
 				case "PrevBtn":
-					if (_wavindex > 0)
+					if (_index > 0)
 					{
-						_wavindex -= 1;
-						soundPlayer.SoundLocation = "";
+						_index -= 1;
+						//play prev. sentense
 					}
 					break;
 				case "StopBtn":
