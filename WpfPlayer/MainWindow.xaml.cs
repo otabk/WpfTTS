@@ -15,12 +15,16 @@ using System.Windows.Media;
 using WpfPlayer.Classes;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using System.Threading.Tasks;
 
 namespace WpfPlayer
 {
 	public partial class MainWindow : Window
 	{
-		WaveOutEvent soundPlayer = new WaveOutEvent();
+		WaveOutEvent Player = new WaveOutEvent();
+		CancellationToken token;
+		CancellationTokenSource cts = new CancellationTokenSource();
+
 
 		int _index = 0, _wavindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
@@ -32,6 +36,7 @@ namespace WpfPlayer
 		public MainWindow()
 		{
 			InitializeComponent();
+			token = cts.Token;
 		}
 
 		private void Run_MouseEnter(object sender, MouseEventArgs e)
@@ -46,40 +51,11 @@ namespace WpfPlayer
 			r.Background = null;
 		}
 
-		private void Run_MouseLeftButtonDown(object sender, MouseEventArgs e)
+		private void Run_MouseLeftButtonDownAsync(object sender, MouseEventArgs e)
 		{
 			var r = (Run)sender;
 			_index = runsList.IndexOf(r);
-			WordDivider.Text = r.Text;
-			var words = WordDivider.GetWords();
-			string[] tempslogs = null;
-			List<string> slogs = new List<string>();
-			foreach (string i in words)
-			{
-				tempslogs = analyzer.Analyze(i); //0 1 0 1 1 0
-				if (tempslogs != null || tempslogs.Length != 0)
-					foreach (string item in tempslogs)
-					{
-						slogs.Add(item);
-					}
-				slogs.Add("<ws>"); //probel belgisi
-			}
-			slogs.RemoveAt(slogs.Count - 1);
-
-			SoundPlayer player = new SoundPlayer();
-			foreach (string item in slogs)
-			{
-				if (item == "<ws>")
-				{
-					Thread.Sleep(500);
-					continue;
-				}
-				var translatedSlog = Translator.Translit(item);
-				player.SoundLocation = audioPaths[translatedSlog][0];
-				player.PlaySync();
-			}
-			player.Dispose();
-			//MessageBox.Show(string.Join("-", slogs.ToArray()), $"Selected sentense [id = {_index}].");
+			r.Background = Brushes.LightSkyBlue;
 		}
 
 		private void OpenFileMenu_Click(object sender, RoutedEventArgs e)
@@ -97,7 +73,7 @@ namespace WpfPlayer
 
 		private void CloseWindowMenu_Click(object sender, RoutedEventArgs e)
 		{
-			
+
 		}
 
 		void PrepareText(string text) //matn kiritiladi
@@ -136,18 +112,6 @@ namespace WpfPlayer
 								}
 							}
 						}
-						/*string wavpath = $"Words\\{suzlar[j]}.wav"; // boshqa yo'lini topdim
-						if (!File.Exists(wavpath)) //wav fayl borligini tekshirish
-						{
-							WaveIO waveIO = new WaveIO();
-							var paths = new string[sWords.Length];
-							for (int n = 0; n < sWords.Length; n++)
-							{
-								paths[n] = sWords[n].TWavPath;
-							}
-							waveIO.Merge(paths, wavpath); // audio fayllarni birlashtirish
-						}*/
-						//todo wav fayllarni adresini yozish kerak
 						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
 						words[j].Init();
 					}
@@ -167,10 +131,10 @@ namespace WpfPlayer
 						var emptyrun = new Run(" ");
 						run.MouseEnter += Run_MouseEnter;
 						run.MouseLeave += Run_MouseLeave;
-						run.MouseLeftButtonDown += Run_MouseLeftButtonDown;
+						run.MouseLeftButtonDown += Run_MouseLeftButtonDownAsync;
 						p.Inlines.Add(run);
 						p.Inlines.Add(emptyrun);
-						
+
 						runsList.Add(run);
 						j++;
 					}
@@ -197,19 +161,64 @@ namespace WpfPlayer
 				case "PrevBtn":
 					if (_index > 0)
 					{
+						Stop();
 						_index -= 1;
-						//play prev. sentense
+						Play(token);
 					}
 					break;
 				case "StopBtn":
+					cts.Cancel();
+					Stop();
 					break;
 				case "PlayBtn":
+					cts.Dispose();
+					cts = new CancellationTokenSource();
+					Play(cts.Token);
 					break;
 				case "NextBtn":
+					if (_index < Gaplar.Count)
+						Play(token);
 					break;
 				default:
 					break;
 			}
+		}
+
+		public async void Play(CancellationToken token)
+		{
+			if (token.IsCancellationRequested) { return; }
+			await Task.Run(() =>
+			{
+				Player = new WaveOutEvent();
+				for (int i = _index; i < Gaplar.Count; i++, _index++)
+				{
+					if (token.IsCancellationRequested) { Player.Stop(); return; }
+					Dispatcher.Invoke(() =>
+					{
+						if (_index != 0)
+							runsList[_index - 1].Background = null;
+						runsList[_index].Background = Brushes.LightSkyBlue;
+					});
+					for (int j = 0; j < Gaplar[_index].Length; j++)
+					{
+						if (token.IsCancellationRequested) { Player.Stop(); return; }
+						Player.Init(Gaplar[_index][j].Wav);
+						Player.Play();
+						while (Player.PlaybackState == PlaybackState.Playing) Thread.Sleep(200);
+					}
+				}
+				cts.Cancel();
+				Player.Stop();
+			});
+		}
+
+		public async void Stop()
+		{
+			await Task.Run(() =>
+			{
+				Player.Stop();
+				Player.Dispose();
+			});
 		}
 	}
 }
