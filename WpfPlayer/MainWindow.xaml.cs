@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace WpfPlayer
 {
+	//что-то нетак
 	public partial class MainWindow : Window
 	{
 		WaveOutEvent Player = new WaveOutEvent();
