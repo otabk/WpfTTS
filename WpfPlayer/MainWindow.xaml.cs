@@ -22,11 +22,10 @@ namespace WpfPlayer
 	public partial class MainWindow : Window
 	{
 		WaveOutEvent Player = new WaveOutEvent();
-		CancellationToken token;
 		CancellationTokenSource cts = new CancellationTokenSource();
 
 
-		int _index = 0, _wavindex = 0;
+		int _index = 0, _wordindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
 		Regex regex = new Regex(@"[^.!?]*[.!?]");
 		List<Run> runsList = new List<Run>();
@@ -36,19 +35,18 @@ namespace WpfPlayer
 		public MainWindow()
 		{
 			InitializeComponent();
-			token = cts.Token;
 		}
 
 		private void Run_MouseEnter(object sender, MouseEventArgs e)
 		{
-			var r = (Run)sender;
-			r.Background = Brushes.LightSkyBlue;
+			//var r = (Run)sender;
+			//r.Background = Brushes.LightSkyBlue;
 		}
 
 		private void Run_MouseLeave(object sender, MouseEventArgs e)
 		{
-			var r = (Run)sender;
-			r.Background = null;
+			//var r = (Run)sender;
+			//r.Background = null;
 		}
 
 		private void Run_MouseLeftButtonDownAsync(object sender, MouseEventArgs e)
@@ -73,7 +71,7 @@ namespace WpfPlayer
 
 		private void CloseWindowMenu_Click(object sender, RoutedEventArgs e)
 		{
-
+			Close();
 		}
 
 		void PrepareText(string text) //matn kiritiladi
@@ -163,21 +161,23 @@ namespace WpfPlayer
 					{
 						Stop();
 						_index -= 1;
-						Play(token);
+						Play(cts.Token);
 					}
 					break;
 				case "StopBtn":
-					cts.Cancel();
 					Stop();
 					break;
 				case "PlayBtn":
-					cts.Dispose();
-					cts = new CancellationTokenSource();
+					Stop();
 					Play(cts.Token);
 					break;
 				case "NextBtn":
 					if (_index < Gaplar.Count)
-						Play(token);
+					{
+						_index += 1;
+						Stop();
+						Play(cts.Token);
+					}
 					break;
 				default:
 					break;
@@ -186,39 +186,68 @@ namespace WpfPlayer
 
 		public async void Play(CancellationToken token)
 		{
-			if (token.IsCancellationRequested) { return; }
 			await Task.Run(() =>
 			{
-				Player = new WaveOutEvent();
+				if (token.IsCancellationRequested) { Stop(); return; }
 				for (int i = _index; i < Gaplar.Count; i++, _index++)
 				{
-					if (token.IsCancellationRequested) { Player.Stop(); return; }
+					if (token.IsCancellationRequested) { Stop(); return; }
 					Dispatcher.Invoke(() =>
 					{
 						if (_index != 0)
 							runsList[_index - 1].Background = null;
 						runsList[_index].Background = Brushes.LightSkyBlue;
 					});
-					for (int j = 0; j < Gaplar[_index].Length; j++)
+					_wordindex = 0;
+					for (int j = _wordindex; j < Gaplar[_index].Length; j++)
 					{
-						if (token.IsCancellationRequested) { Player.Stop(); return; }
+						Player = new WaveOutEvent();
+						if (token.IsCancellationRequested) { Stop(); return; }
 						Player.Init(Gaplar[_index][j].Wav);
 						Player.Play();
-						while (Player.PlaybackState == PlaybackState.Playing) Thread.Sleep(200);
+						while (Player.PlaybackState == PlaybackState.Playing)
+						{
+							Thread.Sleep(100);
+							if (token.IsCancellationRequested) return;
+						}
 					}
 				}
-				cts.Cancel();
-				Player.Stop();
 			});
 		}
 
-		public async void Stop()
+		public void Stop()
 		{
-			await Task.Run(() =>
+			//await Task.Run(() =>
+			//{
+			Dispatcher.Invoke(() =>
 			{
-				Player.Stop();
-				Player.Dispose();
+				cts.Cancel();
+				cts.Dispose();
+				cts = new CancellationTokenSource();
+				runsList[_index].Background = null;
+				for (int i = 0; i < Gaplar.Count; i++)
+				{
+					for (int j = 0; j < Gaplar[i].Length; j++)
+					{
+						Gaplar[i][j].Init();
+					}					
+				}
 			});
+			_wordindex = 0;
+			Player.Stop();
+			Player.Dispose();
+			//});
+		}
+
+		public void DisposeWave()
+		{
+			if (Player != null)
+			{
+				if (Player.PlaybackState == PlaybackState.Playing)
+					Player.Stop();
+				Player.Dispose();
+				Player = null;
+			}
 		}
 	}
 }

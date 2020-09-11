@@ -17,8 +17,6 @@
                 <Separator />
                 <MenuItem Header="Exit" Click="CloseWindowMenu_Click" ></MenuItem>
             </MenuItem>
-            <MenuItem Header="Edit" ></MenuItem>
-            <MenuItem Header="View" ></MenuItem>
             <Button x:Name="PrevBtn" Content="Prev." FontSize="16" Click="Btn_Click"></Button>
             <Button x:Name="StopBtn" Content="Stop" FontSize="16" Click="Btn_Click"></Button>
             <Button x:Name="PlayBtn" Content="Play" FontSize="16" Click="Btn_Click"></Button>
