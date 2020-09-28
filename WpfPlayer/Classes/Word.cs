@@ -22,7 +22,7 @@ namespace WpfPlayer.Classes
 			for (int i = 0; i < Syllables.Length; i++)
 			{
 				var wavSource = new AudioFileReader(Syllables[i].TWavPath);
-				sources[i] = wavSource.Take(new TimeSpan(0, 0, 0, 0, (int)(wavSource.TotalTime.Milliseconds * 0.8)));
+				sources[i] = wavSource.Take(new TimeSpan(0, 0, 0, 0, (int)(wavSource.TotalTime.Milliseconds * 0.8))).Skip(new TimeSpan(0, 0, 0, 0, (int)(wavSource.TotalTime.Milliseconds * 0.1)));
 			}
 			Wav = new ConcatenatingSampleProvider(sources);
 		}

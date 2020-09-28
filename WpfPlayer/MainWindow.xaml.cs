@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Media;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -14,7 +13,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using WpfPlayer.Classes;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using System.Threading.Tasks;
 
 namespace WpfPlayer
@@ -81,6 +79,8 @@ namespace WpfPlayer
 			//{
 			//	tempString = fs.ReadToEnd();
 			//}
+			rtbx.Document.Blocks.Clear();
+			runsList = new List<Run>();
 			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
 																											   //_sd = new SentenceDivider(text);
 			var gaplar = regex.Matches(text); //abzatsni gaplarga bo'ladi

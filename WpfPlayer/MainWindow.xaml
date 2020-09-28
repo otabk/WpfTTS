@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="eYespeak" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
         <Menu VerticalAlignment="Top" FontSize="18">
             <MenuItem Header="File">
@@ -17,7 +17,7 @@
                 <Separator />
                 <MenuItem Header="Exit" Click="CloseWindowMenu_Click" ></MenuItem>
             </MenuItem>
-            <Button x:Name="PrevBtn" Content="Prev." FontSize="16" Click="Btn_Click"></Button>
+            <Button x:Name="PrevBtn" Content="Prev." FontSize="16" Click="Btn_Click" Height="25"/>
             <Button x:Name="StopBtn" Content="Stop" FontSize="16" Click="Btn_Click"></Button>
             <Button x:Name="PlayBtn" Content="Play" FontSize="16" Click="Btn_Click"></Button>
             <Button x:Name="NextBtn" Content="Next" FontSize="16" Click="Btn_Click"></Button>
