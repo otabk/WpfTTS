@@ -14,7 +14,11 @@
                 <MenuItem Header="Exit" Click="CloseWindowMenu_Click" ></MenuItem>
             </MenuItem>
             <Separator />
-            <Button x:Name="PrevBtn" FontSize="16" Click="Btn_Click" Height="25">Prev.
+            <Button x:Name="PrevBtn" FontSize="16" Click="Btn_Click" Height="25">
+                <StackPanel Orientation="Horizontal">
+                    <!--<FontIcon></FontIcon>-->
+                    <TextBlock>Prev.</TextBlock>
+                </StackPanel>
             </Button>
             <Button x:Name="StopBtn" Content="Stop" FontSize="16" Click="Btn_Click"></Button>
             <Button x:Name="PlayBtn" Content="Play" FontSize="16" Click="Btn_Click"></Button>
