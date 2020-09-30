@@ -225,7 +225,8 @@ namespace WpfPlayer
 				cts.Cancel();
 				cts.Dispose();
 				cts = new CancellationTokenSource();
-				runsList[_index].Background = null;
+				if(runsList.Count != 0)
+					runsList[_index].Background = null;
 				for (int i = 0; i < Gaplar.Count; i++)
 				{
 					for (int j = 0; j < Gaplar[i].Length; j++)
