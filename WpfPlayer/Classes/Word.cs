@@ -1,7 +1,6 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
-using System.Threading;
 
 namespace WpfPlayer.Classes
 {
@@ -26,15 +25,5 @@ namespace WpfPlayer.Classes
 			}
 			Wav = new ConcatenatingSampleProvider(sources);
 		}
-
-		/*public void Play()
-		{
-			using(var wo = new WaveOutEvent())
-			{
-				wo.Init(Wav);
-				wo.Play();
-				while(wo.PlaybackState == PlaybackState.Playing) Thread.Sleep(10);
-			}
-		}*/
 	}
 }
