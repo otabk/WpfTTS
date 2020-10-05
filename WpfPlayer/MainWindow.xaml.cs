@@ -14,6 +14,7 @@ using System.Windows.Media;
 using WpfPlayer.Classes;
 using NAudio.Wave;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace WpfPlayer
 {
@@ -86,6 +87,7 @@ namespace WpfPlayer
 			var gaplar = regex.Matches(text); //abzatsni gaplarga bo'ladi
 			Gaplar = new Dictionary<int, TWord[]>();
 			var missingSlogs = new List<string>();
+			int slogIndex = 0, lastSlogIndex;
 			for (int i = 0; i < gaplar.Count; i++)
 			{
 				var suzlar = WordDivider.GetWords(gaplar[i].Value);
@@ -95,15 +97,32 @@ namespace WpfPlayer
 					for (int j = 0; j < suzlar.Length; j++)
 					{
 						var sloglar = analyzer.Analyze(suzlar[j]);
-						SWord[] sWords = new SWord[sloglar.Length];
+						SWord[] sWords = null;
 						if (sloglar != null)
 						{
+							lastSlogIndex = sloglar.Length - 1;
+							sWords = new SWord[sloglar.Length];
 							for (int l = 0; l < sloglar.Length; l++)
 							{
-								var translatedSlog = Translator.Translit(sloglar[l]);
+								if (sloglar[l] == "нинг")
+								{ }
 								try
 								{
-									sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPaths[translatedSlog][0] }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+									if (l == 0)
+									{
+										if (sloglar[l] == suzlar[j])
+											slogIndex = 0;
+										else
+											slogIndex = 1;
+									}
+									else
+									{
+										if (l == lastSlogIndex)
+											slogIndex = 3;
+										else
+											slogIndex = 2;
+									}
+									sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = GetAudioPath(sloglar[l], slogIndex) }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
 								}
 								catch
 								{
@@ -145,10 +164,19 @@ namespace WpfPlayer
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			using (var sr = File.OpenText("AudioPath.txt"))
+			using (var sr = File.OpenText("AudioPath.json"))
 			{
 				string paths = sr.ReadToEnd();
 				audioPaths = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(paths);
+			}
+			//using (var sw = File.CreateText("AudioPath.json"))
+			//{
+			//	audioPaths = audioPaths.OrderBy(o => o.Key).ToDictionary(o => o.Key, o => o.Value);
+			//	sw.Write(JsonConvert.SerializeObject(audioPaths));
+			//}
+			using (var sr = File.OpenText("!temp.txt"))
+			{
+				PrepareText(sr.ReadToEnd());
 			}
 		}
 
@@ -250,6 +278,14 @@ namespace WpfPlayer
 				Player.Dispose();
 				Player = null;
 			}
+		}
+
+		public string GetAudioPath(string slog, int sindex)
+		{
+			var translatedSlog = Translator.Translit(slog);
+			//if(sindex == 0)
+			//	return audioPaths[translatedSlog][sindex];
+			return $"Data\\{translatedSlog}_{sindex}.wav";
 		}
 	}
 }
