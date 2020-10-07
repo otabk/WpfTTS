@@ -22,7 +22,8 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
-			Text = Text.Replace("-", " ").Replace("»", "");
+			Text = Text.Replace("-", " ").Replace("«", "").Replace("»", "");
+			Text = FixNumbers.Fix(Text);
 			var words = new List<string>();
 			var matches = regex.Matches(Text);
 			foreach (Match m in matches)
@@ -38,7 +39,8 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
-			word = word.Replace("-", " ");
+			word = word.Replace("-", " ").Replace("«", "").Replace("»", "");
+			word = FixNumbers.Fix(word);
 			var words = new List<string>();
 			var matches = regex.Matches(word);
 			foreach (Match m in matches)

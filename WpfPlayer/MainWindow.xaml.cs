@@ -53,6 +53,7 @@ namespace WpfPlayer
 		{
 			var r = (Run)sender;
 			_index = runsList.IndexOf(r);
+			NullBackground();
 			r.Background = Brushes.LightSkyBlue;
 		}
 
@@ -84,7 +85,7 @@ namespace WpfPlayer
 			runsList = new List<Run>();
 			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
 																											   //_sd = new SentenceDivider(text);
-			var gaplar = regex.Matches(text); //abzatsni gaplarga bo'ladi
+			var gaplar = regex.Matches(text); 
 			Gaplar = new Dictionary<int, TWord[]>();
 			var missingSlogs = new List<string>();
 			int slogIndex = 0, lastSlogIndex;
@@ -104,8 +105,6 @@ namespace WpfPlayer
 							sWords = new SWord[sloglar.Length];
 							for (int l = 0; l < sloglar.Length; l++)
 							{
-								if (sloglar[l] == "нинг")
-								{ }
 								try
 								{
 									if (l == 0)
@@ -122,7 +121,11 @@ namespace WpfPlayer
 										else
 											slogIndex = 2;
 									}
-									sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = GetAudioPath(sloglar[l], slogIndex) }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+									var audioPath = GetAudioPath(sloglar[l], slogIndex);
+									if (audioPath != null)
+										sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPath }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
+									else
+										return;
 								}
 								catch
 								{
@@ -136,6 +139,10 @@ namespace WpfPlayer
 					Gaplar.Add(i, words);
 				}
 			}
+			using (var sw = File.CreateText("TextData.json"))
+			{
+				sw.Write(JsonConvert.SerializeObject(Gaplar));
+			}
 			for (int i = 0, j = 0; i < paragraphs.Length; i++)
 			{
 				string s = paragraphs[i];
@@ -147,6 +154,7 @@ namespace WpfPlayer
 						var str = gap.Value.Trim();
 						var run = new Run(str);
 						var emptyrun = new Run(" ");
+						run.FontStretch = FontStretches.UltraExpanded;
 						run.MouseEnter += Run_MouseEnter;
 						run.MouseLeave += Run_MouseLeave;
 						run.MouseLeftButtonDown += Run_MouseLeftButtonDownAsync;
@@ -174,7 +182,7 @@ namespace WpfPlayer
 			//	audioPaths = audioPaths.OrderBy(o => o.Key).ToDictionary(o => o.Key, o => o.Value);
 			//	sw.Write(JsonConvert.SerializeObject(audioPaths));
 			//}
-			using (var sr = File.OpenText("!temp.txt"))
+			using (var sr = File.OpenText("1temp.txt"))
 			{
 				PrepareText(sr.ReadToEnd());
 			}
@@ -201,7 +209,7 @@ namespace WpfPlayer
 					Play(cts.Token);
 					break;
 				case "NextBtn":
-					if (_index < Gaplar.Count)
+					if (_index < Gaplar.Count - 1)
 					{
 						_index += 1;
 						Stop();
@@ -253,8 +261,7 @@ namespace WpfPlayer
 				cts.Cancel();
 				cts.Dispose();
 				cts = new CancellationTokenSource();
-				if(runsList.Count != 0)
-					runsList[_index].Background = null;
+				NullBackground();
 				for (int i = 0; i < Gaplar.Count; i++)
 				{
 					for (int j = 0; j < Gaplar[i].Length; j++)
@@ -283,9 +290,25 @@ namespace WpfPlayer
 		public string GetAudioPath(string slog, int sindex)
 		{
 			var translatedSlog = Translator.Translit(slog);
-			//if(sindex == 0)
-			//	return audioPaths[translatedSlog][sindex];
-			return $"Data\\{translatedSlog}_{sindex}.wav";
+			try
+			{
+				//if(sindex == 0)
+				//	return audioPaths[translatedSlog][sindex];
+				return $"Data\\{translatedSlog}_{sindex}.wav";
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show($"Data\\{translatedSlog}_{sindex}.wav not founded!\n\rCopy {translatedSlog}_{sindex}.wav to Data directory.\n\r" + e.Message, "ERROR!");
+				return null;
+			}
+		}
+
+		public void NullBackground()
+		{
+			for (int i = 0; i < runsList.Count; i++)
+			{
+				runsList[i].Background = null;
+			}
 		}
 	}
 }
