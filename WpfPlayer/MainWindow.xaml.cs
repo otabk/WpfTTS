@@ -27,7 +27,8 @@ namespace WpfPlayer
 
 		int _index = 0, _wordindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
-		Regex regex = new Regex(@"[^.!?]*[.!?]");
+		//Regex regex = new Regex(@"[^.!?]*[][.\s]");
+		Regex regex = new Regex(@"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s");
 		List<Run> runsList = new List<Run>();
 		Analyzer analyzer = new Analyzer();
 		Dictionary<string, List<string>> audioPaths;
@@ -84,14 +85,16 @@ namespace WpfPlayer
 			rtbx.Document.Blocks.Clear();
 			runsList = new List<Run>();
 			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
-																											   //_sd = new SentenceDivider(text);
-			var gaplar = regex.Matches(text); 
+			var gaplar = regex.Split(text);
+			//var gaplar = regex.Matches(text);
 			Gaplar = new Dictionary<int, TWord[]>();
 			var missingSlogs = new List<string>();
 			int slogIndex = 0, lastSlogIndex;
-			for (int i = 0; i < gaplar.Count; i++)
+			//for (int i = 0; i < gaplar.Count; i++)
+			for (int i = 0; i < gaplar.Length; i++)
 			{
-				var suzlar = WordDivider.GetWords(gaplar[i].Value);
+				//var suzlar = WordDivider.GetWords(gaplar[i].Value);
+				var suzlar = WordDivider.GetWords(gaplar[i]);
 				if (suzlar != null)
 				{
 					TWord[] words = new TWord[suzlar.Length];
@@ -146,12 +149,14 @@ namespace WpfPlayer
 			for (int i = 0, j = 0; i < paragraphs.Length; i++)
 			{
 				string s = paragraphs[i];
-				if (gaplar.Count > 0)
+				//if (gaplar.Count > 0)
+				if (gaplar.Length > 0)
 				{
 					var p = new Paragraph();
-					foreach (Match gap in gaplar)
+					foreach (string gap in gaplar)
 					{
-						var str = gap.Value.Trim();
+						//var str = gap.Value.Trim();
+						var str = gap.Trim();
 						var run = new Run(str);
 						var emptyrun = new Run(" ");
 						run.FontStretch = FontStretches.UltraExpanded;
@@ -182,7 +187,7 @@ namespace WpfPlayer
 			//	audioPaths = audioPaths.OrderBy(o => o.Key).ToDictionary(o => o.Key, o => o.Value);
 			//	sw.Write(JsonConvert.SerializeObject(audioPaths));
 			//}
-			using (var sr = File.OpenText("1temp.txt"))
+			using (var sr = File.OpenText("!temp.txt"))
 			{
 				PrepareText(sr.ReadToEnd());
 			}

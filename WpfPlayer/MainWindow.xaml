@@ -59,7 +59,7 @@
             <Slider x:Name="SizeSlider" Width="116" VerticalAlignment="Top" Margin="5,5,5,0" Maximum="36" Minimum="12"/>
             <Image Source="{StaticResource LargeTextIcon}" Width="25" VerticalAlignment="Top" Margin="0,6,0,0"/>
         </StackPanel>
-        <RichTextBox x:Name="rtbx" VerticalScrollBarVisibility="Auto" Margin="0,27,0,0" Padding="5" HorizontalContentAlignment="Stretch" Visibility="Visible" FontSize="{Binding ElementName=SizeSlider, Path=Value}">
+        <RichTextBox x:Name="rtbx" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Margin="0,27,0,0" Padding="5" HorizontalContentAlignment="Stretch" Visibility="Visible" FontSize="{Binding ElementName=SizeSlider, Path=Value}">
             <FlowDocument>
                 <!--<Paragraph>
                     <Run Background="LightSkyBlue">123 dsf adsfgguw47rto7w gsufyasueyfg o8we7syuiedfg aoegt WIEGF </Run>
