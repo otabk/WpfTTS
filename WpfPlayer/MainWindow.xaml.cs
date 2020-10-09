@@ -24,6 +24,7 @@ namespace WpfPlayer
 		WaveOutEvent Player = new WaveOutEvent();
 		CancellationTokenSource cts = new CancellationTokenSource();
 
+		public static List<string> notFounList = new List<string>();
 
 		int _index = 0, _wordindex = 0;
 		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
@@ -128,7 +129,10 @@ namespace WpfPlayer
 									if (audioPath != null)
 										sWords[l] = new SWord() { Syllable = sloglar[l], TWavPath = audioPath }; // [0] ni o'rniga bo'g'inni so'zni qayerida kelishini yozish kerak
 									else
-										return;
+									{
+										if (!notFounList.Contains(audioPath))
+											notFounList.Add(audioPath);
+									}
 								}
 								catch
 								{
@@ -142,9 +146,16 @@ namespace WpfPlayer
 					Gaplar.Add(i, words);
 				}
 			}
+			using (var sw = File.AppendText("NotFoundedAudioFiles.txt"))
+			{
+				for (int i = 0; i < notFounList.Count; i++)
+				{
+					sw.WriteLine(notFounList[i]);
+				}
+			}
 			using (var sw = File.CreateText("TextData.json"))
 			{
-				sw.Write(JsonConvert.SerializeObject(Gaplar));
+				sw.Write(JsonConvert.SerializeObject(Gaplar, Formatting.Indented));
 			}
 			for (int i = 0, j = 0; i < paragraphs.Length; i++)
 			{
@@ -297,9 +308,10 @@ namespace WpfPlayer
 			var translatedSlog = Translator.Translit(slog);
 			try
 			{
-				//if(sindex == 0)
-				//	return audioPaths[translatedSlog][sindex];
-				return $"Data\\{translatedSlog}_{sindex}.wav";
+				var path = $"Data\\{translatedSlog}_{sindex}.wav";
+				if (File.Exists(path))
+					return $"Data\\{translatedSlog}_{sindex}.wav";
+				return null;
 			}
 			catch (Exception e)
 			{

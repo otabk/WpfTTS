@@ -1,6 +1,0 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:System;assembly=mscorlib">
-    <FontFamily x:Key="FlaticonFontFamily">ms-appx:///assets/fonts/flaticon.otf#Flaticon</FontFamily>
-    <local:String x:Key="PrevIcon">&#xF024;</local:String>
-</ResourceDictionary>

@@ -61,9 +61,8 @@
         </StackPanel>
         <RichTextBox x:Name="rtbx" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Margin="0,27,0,0" Padding="5" HorizontalContentAlignment="Stretch" Visibility="Visible" FontSize="{Binding ElementName=SizeSlider, Path=Value}">
             <FlowDocument>
-                <!--<Paragraph>
-                    <Run Background="LightSkyBlue">123 dsf adsfgguw47rto7w gsufyasueyfg o8we7syuiedfg aoegt WIEGF </Run>
-                </Paragraph>-->
+                <Paragraph>
+                </Paragraph>
             </FlowDocument>
         </RichTextBox>
     </Grid>
