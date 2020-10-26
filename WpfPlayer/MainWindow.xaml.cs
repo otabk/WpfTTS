@@ -86,13 +86,23 @@ namespace WpfPlayer
 			rtbx.Document.Blocks.Clear();
 			runsList = new List<Run>();
 			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
-			var gaplar = regex.Split(text);
+			int[] sentencesInParagraph = new int[paragraphs.Length];
+			List<string> gaplar = new List<string>();
+			for (int i = 0; i < paragraphs.Length; i++)
+			{
+				var tempgaplar = regex.Split(paragraphs[i]);
+				sentencesInParagraph[i] = tempgaplar.Length;
+				foreach (string s in tempgaplar)
+				{
+					gaplar.Add(s);
+				}
+			}
 			//var gaplar = regex.Matches(text);
 			Gaplar = new List<TWord[]>();
 			var missingSlogs = new List<string>();
 			int slogIndex = 0, lastSlogIndex;
 			//for (int i = 0; i < gaplar.Count; i++)
-			for (int i = 0; i < gaplar.Length; i++)
+			for (int i = 0; i < gaplar.Count; i++)
 			{
 				//var suzlar = WordDivider.GetWords(gaplar[i].Value);
 				var suzlar = WordDivider.GetWords(gaplar[i]);
@@ -153,19 +163,20 @@ namespace WpfPlayer
 					sw.WriteLine(notFounList[i]);
 				}
 			}
-			using (var sw = File.CreateText("TextData.json"))
+			//using (var sw = File.CreateText("TextData.json"))
+			//{
+			//	sw.Write(JsonConvert.SerializeObject(Gaplar, Formatting.Indented));
+			//}
+			if (gaplar.Count > 0)
 			{
-				sw.Write(JsonConvert.SerializeObject(Gaplar, Formatting.Indented));
-			}
-			for (int i = 0, j = 0; i < paragraphs.Length; i++)
-			{
-				string s = paragraphs[i];
-				//if (gaplar.Count > 0)
-				if (gaplar.Length > 0)
+				for (int i = 0, j = 0; i < sentencesInParagraph.Length; i++)
 				{
+					//string s = paragraphs[i];
+					//if (gaplar.Count > 0)
 					var p = new Paragraph();
-					foreach (string gap in gaplar)
+					for (int l = 0; l < sentencesInParagraph[i]; l++)
 					{
+						string gap = gaplar[j];
 						//var str = gap.Value.Trim();
 						var str = gap.Trim();
 						var run = new Run(str);
@@ -190,11 +201,11 @@ namespace WpfPlayer
 		{
 			if (!Directory.Exists("\\Data"))
 				Directory.CreateDirectory("\\Data");
-			using (var sr = File.OpenText("AudioPath.json"))
-			{
-				string paths = sr.ReadToEnd();
-				audioPaths = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(paths);
-			}
+			//using (var sr = File.OpenText("AudioPath.json"))
+			//{
+			//	string paths = sr.ReadToEnd();
+			//	audioPaths = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(paths);
+			//}
 			//using (var sw = File.CreateText("AudioPath.json"))
 			//{
 			//	audioPaths = audioPaths.OrderBy(o => o.Key).ToDictionary(o => o.Key, o => o.Value);
