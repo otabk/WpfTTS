@@ -82,10 +82,7 @@ namespace WpfPlayer.Classes
 					// охири "ё" билан тугаган сузлар билан ишлаш
 					if ((jamiunli == 2) && (word[tempword.Length - 1] == 'ё')) // 2 та унли ва охири "ё" булса
 					{
-						for (int j = position; j < tempword.Length - 1; j++)
-						{
-							tempword += word[j];
-						}
+						tempword = tempword.Substring(0, tempword.Length - 1);
 						slogs.Add(tempword);
 						slogs.Add("ё");
 						return slogs.ToArray();

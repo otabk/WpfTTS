@@ -27,7 +27,7 @@ namespace WpfPlayer
 		public static List<string> notFounList = new List<string>();
 
 		int _index = 0, _wordindex = 0;
-		Dictionary<int, TWord[]> Gaplar = new Dictionary<int, TWord[]>();
+		List<TWord[]> Gaplar = new List<TWord[]>();
 		//Regex regex = new Regex(@"[^.!?]*[][.\s]");
 		Regex regex = new Regex(@"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s");
 		List<Run> runsList = new List<Run>();
@@ -88,7 +88,7 @@ namespace WpfPlayer
 			var paragraphs = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); //matnni abzatslarga bo'ladi
 			var gaplar = regex.Split(text);
 			//var gaplar = regex.Matches(text);
-			Gaplar = new Dictionary<int, TWord[]>();
+			Gaplar = new List<TWord[]>();
 			var missingSlogs = new List<string>();
 			int slogIndex = 0, lastSlogIndex;
 			//for (int i = 0; i < gaplar.Count; i++)
@@ -143,7 +143,7 @@ namespace WpfPlayer
 						words[j] = new TWord() { Word = suzlar[j], Syllables = sWords };
 						words[j].Init();
 					}
-					Gaplar.Add(i, words);
+					Gaplar.Add(words);
 				}
 			}
 			using (var sw = File.AppendText("NotFoundedAudioFiles.txt"))
@@ -188,6 +188,8 @@ namespace WpfPlayer
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (!Directory.Exists("\\Data"))
+				Directory.CreateDirectory("\\Data");
 			using (var sr = File.OpenText("AudioPath.json"))
 			{
 				string paths = sr.ReadToEnd();
@@ -270,8 +272,6 @@ namespace WpfPlayer
 
 		public void Stop()
 		{
-			//await Task.Run(() =>
-			//{
 			Dispatcher.Invoke(() =>
 			{
 				cts.Cancel();
@@ -283,13 +283,12 @@ namespace WpfPlayer
 					for (int j = 0; j < Gaplar[i].Length; j++)
 					{
 						Gaplar[i][j].Init();
-					}					
+					}
 				}
 			});
 			_wordindex = 0;
 			Player.Stop();
 			Player.Dispose();
-			//});
 		}
 
 		public void DisposeWave()
@@ -306,18 +305,13 @@ namespace WpfPlayer
 		public string GetAudioPath(string slog, int sindex)
 		{
 			var translatedSlog = Translator.Translit(slog);
-			try
+			var path = $"Data\\{translatedSlog}_{sindex}.wav";
+			if (!File.Exists(path))
 			{
-				var path = $"Data\\{translatedSlog}_{sindex}.wav";
-				if (File.Exists(path))
-					return $"Data\\{translatedSlog}_{sindex}.wav";
-				return null;
+				MessageBox.Show($"{path}.wav not founded!\n\rPlease, copy {translatedSlog}_{sindex}.wav to Data directory.", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
+				return "";
 			}
-			catch (Exception e)
-			{
-				MessageBox.Show($"Data\\{translatedSlog}_{sindex}.wav not founded!\n\rCopy {translatedSlog}_{sindex}.wav to Data directory.\n\r" + e.Message, "ERROR!");
-				return null;
-			}
+			return path;
 		}
 
 		public void NullBackground()

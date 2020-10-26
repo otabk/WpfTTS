@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,16 +8,24 @@ using System.Windows;
 
 namespace WpfPlayer.Classes
 {
-	class SWord
+	class SWord //бўғин ва файл
 	{
+		[JsonProperty("slog", Order = 1)]
 		public string Syllable { get; set; }
+
+		[JsonProperty("path", Order = 2)]
 		public string TWavPath { get; set; }
 	}
 
-	class TWord
+	class TWord //сўз ва бўғинлар массиви ҳамда товуш
 	{
-		public SWord[] Syllables { get; set; }
+		[JsonProperty("word", Order = 1)]
 		public string Word { get; set; }
+
+		[JsonProperty("slogs", Order = 2)]
+		public SWord[] Syllables { get; set; }
+
+		[JsonIgnore]
 		public ConcatenatingSampleProvider Wav = null;
 
 		public void Init()
