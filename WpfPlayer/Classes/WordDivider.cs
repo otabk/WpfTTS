@@ -39,7 +39,6 @@ namespace WpfPlayer.Classes
 			{
 				return null;
 			}
-			word = word.Replace("-", " ").Replace("«", "").Replace("»", "");
 			word = FixNumbers.Fix(word);
 			var words = new List<string>();
 			var matches = regex.Matches(word);
@@ -48,6 +47,11 @@ namespace WpfPlayer.Classes
 				words.Add(m.Value);
 			}
 			return words.ToArray();
+		}
+
+		private static string FixSybols(string text)
+		{
+			return "";
 		}
 	}
 }

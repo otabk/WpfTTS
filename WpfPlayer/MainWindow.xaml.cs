@@ -319,6 +319,14 @@ namespace WpfPlayer
 			var path = $"Data\\{translatedSlog}_{sindex}.wav";
 			if (!File.Exists(path))
 			{
+				var files = Directory.GetFiles("Data\\", $"{translatedSlog}_*.wav");
+				if (files.Length > 0)
+				{
+					path = files[0];
+					return path;
+				}
+				notFounList.Contains(path);
+				notFounList.Add(path);
 				MessageBox.Show($"{path}.wav not founded!\n\rPlease, copy {translatedSlog}_{sindex}.wav to Data directory.", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
 				return "";
 			}

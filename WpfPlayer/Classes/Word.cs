@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 
 namespace WpfPlayer.Classes
@@ -42,13 +43,11 @@ namespace WpfPlayer.Classes
 					}
 					else
 					{
-						if (!MainWindow.notFounList.Contains(Syllables[i].TWavPath))
-							MainWindow.notFounList.Add(Syllables[i].TWavPath);
 						sources[i] = null;
+						return;
 					}
 				}
-				if(sources != null)
-					Wav = new ConcatenatingSampleProvider(sources);
+				Wav = new ConcatenatingSampleProvider(sources);
 			}
 			catch (Exception e)
 			{

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace WpfPlayer.Classes
 {
@@ -20,22 +22,27 @@ namespace WpfPlayer.Classes
 		public static string Fix (string text)
 		{
 			text = FindIp(text);
-			var matches = pattern.Matches(text);
-			if (matches.Count > 0)
+			var matches = pattern.Matches(text).Cast<Match>().Select(m => m.Value).OrderByDescending(x=>x.Length).ToArray();
+			
+			if (matches.Length > 0)
 			{
-				for (int i = 0; i < matches.Count; i++)
+				for (int i = 0; i < matches.Length; i++)
 				{
-					var tmparr = matches[i].Value.Split(new[] { ".", "," }, StringSplitOptions.RemoveEmptyEntries);
-					string number;
+					var tmparr = matches[i].Split(new[] { ".", "," }, StringSplitOptions.RemoveEmptyEntries);
+					string textnumber;
 					if (tmparr.Length == 1)
 					{
-						number = Num2Text(tmparr[0]);
+						textnumber = Num2Text(tmparr[0]);
 					}
 					else
 					{
-						number = $"{ Num2Text(tmparr[0])} {_butun} { _kasr[tmparr[1].Length - 1]} { Num2Text(tmparr[1])}";
+						textnumber = $"{ Num2Text(tmparr[0])} {_butun} { _kasr[tmparr[1].Length - 1]} { Num2Text(tmparr[1])}";
 					}
-					text = text.Replace(matches[i].Value, number);
+					if (matches[i] == "499")
+					{
+						var a = 1;
+					}
+					text = text.Replace(matches[i], textnumber);
 				}
 			}
 			return text;
